@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class Tile {
 	
 	public enum TileType {Empty, Floor};
 
-	TileType type = TileType.Empty;
+	private TileType _type = TileType.Empty;
 
 	public TileType Type {
-		get {
-			return type;
-		}
+		get {return _type;}
 		set {
-			type = value;
+			TileType oldType = _type;
+			_type = value;
+
+			if (cbTileTypeChanged != null && oldType != _type)
+				cbTileTypeChanged (this);
 		}
 	}
 
@@ -20,25 +23,23 @@ public class Tile {
 	InstalledObject installedObject;
 
 	World world;
-	int x;
 
-	public int X {
-		get {
-			return x;
-		}
-	}
+	public int X {get; protected set; }
+	public int Y { get; protected set;}
 
-	int y;
-
-	public int Y {
-		get {
-			return y;
-		}
-	}
+	Action<Tile> cbTileTypeChanged;
 
 	public Tile(World world, int x, int y){
 		this.world = world;
-		this.x = x;
-		this.y = y;
+		this.X = x;
+		this.Y = y;
+	}
+
+	public void RegisterTileTypeChangedCallback(Action<Tile> callback){
+		cbTileTypeChanged += callback;
+	}
+
+	public void UnregisterTileTypeChangedCallback(Action<Tile> callback){
+		cbTileTypeChanged -= callback;
 	}
 }

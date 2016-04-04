@@ -10,7 +10,7 @@ public class WorldController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		world = new World();
-		world.RandomizeTiles();
+
 
 		//Create GameObject for each of our tiles, so they show visually.
 		for (int x = 0; x < world.Width; x++) {
@@ -21,18 +21,29 @@ public class WorldController : MonoBehaviour {
 				tile_go.name = "Tile_" + x + "_" + y;
 				tile_go.transform.position = new Vector3 (tile_data.X, tile_data.Y, 0);
 
-				SpriteRenderer tile_sr = tile_go.AddComponent<SpriteRenderer> ();
+				tile_go.AddComponent<SpriteRenderer> ();
 
-				if (tile_data.Type == Tile.TileType.Floor) {
-					tile_sr.sprite = floorSprite;
-				}
+				tile_data.RegisterTileTypeChangedCallback((tile) => {OnTileTypeChanged(tile,tile_go);});
 
 			}
 		}
+		world.RandomizeTiles();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+	void Update(){
+		
+	}
+
+	void OnTileTypeChanged(Tile tile_data, GameObject tile_go){
+
+		if (tile_data.Type == Tile.TileType.Floor) {
+			tile_go.GetComponent<SpriteRenderer> ().sprite = floorSprite;
+
+		} else if(tile_data.Type == Tile.TileType.Empty){
+			tile_go.GetComponent<SpriteRenderer> ().sprite = null;
+
+		}else{
+			Debug.LogError("OnTileTypeChanged - Unrecognized tile type.");
+		}
+
 	}
 }
