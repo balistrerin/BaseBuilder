@@ -42,12 +42,18 @@ public class MouseController : MonoBehaviour {
 	}
 
 	void UpdateDragging(){
+		
+		// Start Drag
+		if (Input.GetMouseButtonDown (0)) {
+			dragStartPosition = currFramePosition;
+		}
 
+		// End Drag
 		if (Input.GetMouseButtonUp (0)) {
-			int start_x = Mathf.FloorToInt (dragStartPosition.x);
-			int end_x = Mathf.FloorToInt (currFramePosition.x);
-			int start_y = Mathf.FloorToInt (dragStartPosition.y);
-			int end_y = Mathf.FloorToInt (currFramePosition.y);
+			int start_x =   Mathf.FloorToInt (dragStartPosition.x);
+			int end_x   =   Mathf.FloorToInt (currFramePosition.x);
+			int start_y =   Mathf.FloorToInt (dragStartPosition.y);
+			int end_y   =   Mathf.FloorToInt (currFramePosition.y);
 
 			if (end_x < start_x) {
 				int temp = end_x;

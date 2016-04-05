@@ -62,7 +62,7 @@ public class WorldController : MonoBehaviour {
 		int x = Mathf.FloorToInt (coord.x);
 		int y = Mathf.FloorToInt (coord.y);
 
-		return WorldController.Instance.World.GetTileAt (x, y);
+		return World.GetTileAt (x, y);
 
 	}
 }
