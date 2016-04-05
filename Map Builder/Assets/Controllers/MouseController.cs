@@ -46,14 +46,15 @@ public class MouseController : MonoBehaviour {
 		if (Input.GetMouseButtonUp (0)) {
 			int start_x = Mathf.FloorToInt (dragStartPosition.x);
 			int end_x = Mathf.FloorToInt (currFramePosition.x);
+			int start_y = Mathf.FloorToInt (dragStartPosition.y);
+			int end_y = Mathf.FloorToInt (currFramePosition.y);
+
 			if (end_x < start_x) {
 				int temp = end_x;
 				end_x = start_x;
 				start_x = temp;
 			}
-
-			int start_y = Mathf.FloorToInt (dragStartPosition.y);
-			int end_y = Mathf.FloorToInt (currFramePosition.y);
+				
 			if (end_y < start_y) {
 				int temp = end_y;
 				end_y = start_y;
@@ -78,9 +79,7 @@ public class MouseController : MonoBehaviour {
 			Vector3 diff = lastFramePosition - currFramePosition;
 			Camera.main.transform.Translate (diff);
 		}
-
-		lastFramePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-		lastFramePosition.z = 0;
+			
 	}
 }
 
