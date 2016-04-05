@@ -6,6 +6,7 @@ public class MouseController : MonoBehaviour {
 	public GameObject circleCursor;
 
 	Vector3 lastFramePosition;
+	Vector3 currFramePosition;
 	Vector3 dragStartPosition;
 
 	// Use this for initialization
@@ -15,11 +16,20 @@ public class MouseController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Vector3 currFramePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+		currFramePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 		currFramePosition.z = 0;
 
-		// Update the circle cursor position
-		Tile tileUnderMouse = GetTileAtWorldCoord (currFramePosition);
+		UpdateCursor ();
+		UpdateDragging ();
+		UpdateCameraMovement ();
+
+		lastFramePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+		lastFramePosition.z = 0;
+	}
+
+	void UpdateCursor(){
+
+		Tile tileUnderMouse = WorldController.Instance.GetTileAtWorldCoord (currFramePosition);
 		if (tileUnderMouse != null) {
 			circleCursor.SetActive (true);
 			Vector3 cursorPosition = new Vector3 (tileUnderMouse.X, tileUnderMouse.Y, 0);
@@ -28,13 +38,11 @@ public class MouseController : MonoBehaviour {
 			circleCursor.SetActive (false);
 		}
 
-		// Start Drag
-		if (Input.GetMouseButtonDown (0)) {
 
-			dragStartPosition = currFramePosition;
-		}
+	}
 
-		// End Drag
+	void UpdateDragging(){
+
 		if (Input.GetMouseButtonUp (0)) {
 			int start_x = Mathf.FloorToInt (dragStartPosition.x);
 			int end_x = Mathf.FloorToInt (currFramePosition.x);
@@ -61,6 +69,9 @@ public class MouseController : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	void UpdateCameraMovement(){
 
 		if (Input.GetMouseButton (1) || Input.GetMouseButton (2)) {
 
@@ -71,13 +82,5 @@ public class MouseController : MonoBehaviour {
 		lastFramePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 		lastFramePosition.z = 0;
 	}
-
-	Tile GetTileAtWorldCoord(Vector3 coord){
-
-		int x = Mathf.FloorToInt (coord.x);
-		int y = Mathf.FloorToInt (coord.y);
-
-		return WorldController.Instance.World.GetTileAt (x, y);
-
-	}
 }
+
