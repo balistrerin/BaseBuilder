@@ -14,6 +14,8 @@ public class MouseController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		dragPreviewGameObjects = new List<GameObject>();
+
+		SimplePool.Preload (circleCursorPrefab, 100);
 	}
 	
 	// Update is called once per frame
@@ -80,6 +82,7 @@ public class MouseController : MonoBehaviour {
 					Tile t = WorldController.Instance.World.GetTileAt (x, y);
 					if (t != null) {
 						GameObject go = SimplePool.Spawn (circleCursorPrefab, new Vector3 (x, y, 0), Quaternion.identity);
+						go.transform.SetParent (this.transform, true);
 						dragPreviewGameObjects.Add (go);
 					}
 				}
@@ -108,6 +111,10 @@ public class MouseController : MonoBehaviour {
 			Camera.main.transform.Translate (diff);
 		}
 			
+		Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis ("Mouse ScrollWheel") ;
+
+		Camera.main.orthographicSize = Mathf.Clamp (Camera.main.orthographicSize, 3f, 25f);
 	}
+
 }
 
