@@ -5,9 +5,7 @@ public class WorldController : MonoBehaviour {
 
 
 	public static WorldController Instance{ get; protected set;}
-
 	public Sprite floorSprite;
-
 	public World World { get; protected set;}
 
 	// Use this for initialization
