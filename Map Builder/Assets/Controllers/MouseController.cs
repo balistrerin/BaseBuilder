@@ -4,9 +4,12 @@ using UnityEngine.EventSystems;
 
 public class MouseController : MonoBehaviour {
 
+
+	bool buildModeIsObjects = false;
 	public GameObject circleCursorPrefab;
 
 	Tile.TileType buildModeTile = Tile.TileType.Floor;
+	string buildModeObjectType;
 
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
@@ -32,21 +35,7 @@ public class MouseController : MonoBehaviour {
 		lastFramePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 		lastFramePosition.z = 0;
 	}
-
-//	void UpdateCursor(){
-//
-//		Tile tileUnderMouse = WorldController.Instance.GetTileAtWorldCoord (currFramePosition);
-//		if (tileUnderMouse != null) {
-//			circleCursor.SetActive (true);
-//			Vector3 cursorPosition = new Vector3 (tileUnderMouse.X, tileUnderMouse.Y, 0);
-//			circleCursor.transform.position = cursorPosition;
-//		} else {
-//			circleCursor.SetActive (false);
-//		}
-//
-//
-//	}
-
+		
 	void UpdateDragging(){
 
 		if (EventSystem.current.IsPointerOverGameObject ()) {
@@ -101,8 +90,19 @@ public class MouseController : MonoBehaviour {
 			for (int x = start_x; x <= end_x; x++) {
 				for (int y = start_y; y <= end_y; y++) {
 					Tile t = WorldController.Instance.World.GetTileAt (x, y);
+
 					if (t != null) {
-						t.Type = buildModeTile;
+						if (buildModeIsObjects == true) {
+
+							WorldController.Instance.World.PlaceInstalledObject (buildModeObjectType, t);
+
+
+
+
+						} else {
+
+							t.Type = buildModeTile;
+						}
 					}
 				}
 			}
@@ -125,11 +125,19 @@ public class MouseController : MonoBehaviour {
 	public void SetMode_BuildFloor(){
 
 		buildModeTile = Tile.TileType.Floor;
+		buildModeIsObjects = false;
 	}
 
 	public void SetMode_Bulldoze(){
 
 		buildModeTile = Tile.TileType.Empty;
+		buildModeIsObjects = false;
+	}
+
+	public void SetMode_BuildInstalledObject(string objectType){
+		
+		buildModeIsObjects = true;
+		buildModeObjectType = objectType;
 	}
 }
 

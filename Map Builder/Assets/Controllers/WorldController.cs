@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 
 public class WorldController : MonoBehaviour {
 
-
 	public static WorldController Instance{ get; protected set;}
 	public Sprite floorSprite;
+	public Sprite wallSprite;
 
 	Dictionary<Tile,GameObject> tileGameObjectMap;
+
+	Dictionary<InstalledObject,GameObject> installedObjectGameObjectMap;
 
 	public World World { get; protected set;}
 
@@ -22,7 +25,10 @@ public class WorldController : MonoBehaviour {
 
 		World = new World();
 
+		World.RegisterInstalledObjectCreated (OnInstalledObjectCreated);
+
 		tileGameObjectMap = new Dictionary<Tile, GameObject> ();
+		installedObjectGameObjectMap = new Dictionary<InstalledObject,GameObject> ();
 
 
 		//Create GameObject for each of our tiles, so they show visually.
@@ -48,6 +54,18 @@ public class WorldController : MonoBehaviour {
 	}
 	void Update(){
 		
+	}
+
+	void DestroyAllTileGameObjects(){
+
+		while (tileGameObjectMap.Count > 0) {
+			Tile tile_data = tileGameObjectMap.Keys.First ();
+			GameObject tile_go = tileGameObjectMap [tile_data];
+
+			tileGameObjectMap.Remove (tile_data);
+			tile_data.UnregisterTileTypeChangedCallback (OnTileTypeChanged);
+			Destroy (tile_go);
+		}
 	}
 
 	void OnTileTypeChanged(Tile tile_data){
@@ -83,4 +101,25 @@ public class WorldController : MonoBehaviour {
 		return World.GetTileAt (x, y);
 
 	}
+
+	public void OnInstalledObjectCreated(InstalledObject obj){
+
+		GameObject obj_go = new GameObject ();
+
+		installedObjectGameObjectMap.Add (obj, obj_go);
+
+		obj_go.name = obj.objectType + "_" + obj.tile.X + "_" + obj.tile.Y;
+		obj_go.transform.position = new Vector3 (obj.tile.X, obj.tile.Y, 0);
+		obj_go.transform.SetParent (this.transform, true);
+
+		obj_go.AddComponent<SpriteRenderer> ().sprite = wallSprite;
+
+		obj.RegisterOnChangedCallback (OnInstalledObjectChanged);
+
+	}
+
+	void OnInstalledObjectChanged(InstalledObject obj){
+		Debug.LogError("OnInstalledObjectChanged -- NOT IMPLEMENTED");
+	}
+
 }

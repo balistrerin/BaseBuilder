@@ -42,4 +42,20 @@ public class Tile {
 	public void UnregisterTileTypeChangedCallback(Action<Tile> callback){
 		cbTileTypeChanged -= callback;
 	}
+
+	public bool PlaceObject(InstalledObject objInstance){
+
+		if (objInstance == null) {
+			installedObject = null;
+			return true;
+		}
+
+		if (installedObject != null) {
+			Debug.LogError ("Trying to assing an installed object to a tile that already has one!");
+			return false;
+		}
+
+		installedObject = objInstance;
+		return true;
+	}
 }
